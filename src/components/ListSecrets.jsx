@@ -5,9 +5,9 @@ import { useState } from "react";
 import { supabase } from "../../utils/supabase";
 
 const statuses = {
-  cancel: "text-gray-500 bg-gray-100/10",
+  pending: "text-gray-500 bg-gray-100/10",
   sold: "text-green-400 bg-green-400/10",
-  pending: "text-rose-400 bg-rose-400/10",
+  canceled: "text-rose-400 bg-rose-400/10",
 };
 const environments = {
   Sold: "text-gray-400 bg-gray-400/10 ring-gray-400/20",
@@ -22,7 +22,7 @@ function classNames(...classes) {
 }
 
 export default function List({ openForm, receivedSecrets, sentSecrets }) {
-  const [selectedSecret, setSelectedSecret] = useState({ secret: "" });
+  const [selectedSecret, setSelectedSecret] = useState({ secret: "", id: "", price: "" });
   const [open, setOpen] = useState(false);
   const handleSelect = (secret) => {
     setSelectedSecret(secret);
@@ -41,7 +41,7 @@ export default function List({ openForm, receivedSecrets, sentSecrets }) {
 
   return (
     <>
-      <Approve secret={selectedSecret.secret} status={selectedSecret.status} open={open} setOpen={setOpen} approve={handleApply} deny={handleDeny} />
+      <Approve secret={selectedSecret.secret} price={selectedSecret.price} status={selectedSecret.status} open={open} setOpen={setOpen} approve={handleApply} deny={handleDeny} />
       <li key={1} className="relative flex items-center  text-center  py-4">
         <div className="min-w-0 flex-auto">
           <div className="flex items-center gap-x-3">
@@ -77,7 +77,7 @@ export default function List({ openForm, receivedSecrets, sentSecrets }) {
           </li>
         ))}
         {sentSecrets.map((deployment) => (
-          <li key={deployment.id} className="relative flex items-center space-x-4 py-4" onClick={() => handleSelect(deployment)}>
+          <li key={deployment.id} className="relative flex items-center space-x-4 py-4">
             <div className="min-w-0 flex-auto">
               <div className="flex items-center gap-x-3">
                 <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
@@ -91,7 +91,7 @@ export default function List({ openForm, receivedSecrets, sentSecrets }) {
               </div>
             </div>
             <div className={classNames(environments[deployment.environment], "rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset")}>
-              {deployment.status === "canceled" ? "returned" : deployment.status}
+              {deployment.status === "canceled" ? "returned" : deployment.status === "pending" ? "waiting payment" : deployment.status}
             </div>
             <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
           </li>
