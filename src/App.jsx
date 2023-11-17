@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { useSDK } from "@metamask/sdk-react";
 import SendPassword from "./components/SendForm";
 import List from "./components/ListSecrets";
+import { ethers } from "ethers";
 
 function App() {
   const [account, setAccount] = useState();
@@ -17,8 +18,21 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    const initializeProvider = async () => {
+      if (window.ethereum) {
+        console.log(window.ethereum);
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        console.log(provider);
+        const network = await provider.getNetwork();
+        console.log(network.name);
+      }
+    };
+    initializeProvider();
+  }, []);
+
   const handleOnMove = (e) => {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-";
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-0x";
 
     const randomChar = () => chars[Math.floor(Math.random() * (chars.length - 1))],
       randomString = (length) => Array.from(Array(length)).map(randomChar).join("");

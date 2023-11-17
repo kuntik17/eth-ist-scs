@@ -14,7 +14,6 @@ export default function SendPassword() {
   const [warning, setWarning] = useState("");
 
   const handleShare = () => {
-    setLoading(true);
     if (!form.secrets) {
       setIsOpen(true);
       setWarning("You need to add a secret");
@@ -25,6 +24,7 @@ export default function SendPassword() {
       setWarning("You need to add an address to share");
       return;
     }
+    setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setShared(true);
