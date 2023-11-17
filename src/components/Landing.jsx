@@ -56,7 +56,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">Secrets stay secrets</h1>
+            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">Secure Cred Swap</h1>
             <p className="mt-6 text-lg leading-8 text-gray-300">Share your secrets using blockchain technology. No one can see your secret until you share it with them.</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
