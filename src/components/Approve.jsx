@@ -1,9 +1,8 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
-export default function Approve({ setOpen, open, secret, approve, deny, status }) {
+export default function Approve({ setOpen, open, secret, approve, deny, status, price }) {
   if (!secret && open) return <></>;
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -46,7 +45,7 @@ export default function Approve({ setOpen, open, secret, approve, deny, status }
                       className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
                       onClick={approve}
                     >
-                      Approve
+                      Pay {price} ETH
                     </button>
                     <button
                       type="button"
@@ -82,4 +81,5 @@ Approve.propTypes = {
   open: PropTypes.bool,
   setOpen: PropTypes.func,
   status: PropTypes.string,
+  price: PropTypes.string,
 };
