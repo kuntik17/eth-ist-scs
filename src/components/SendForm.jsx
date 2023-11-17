@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import baffle from "baffle";
 import Alert from "./Alert";
+import { supabase } from "../../utils/supabase";
+import PropTypes from "prop-types";
 
-export default function SendPassword() {
+export default function SendPassword({ account }) {
   const [loading, setLoading] = useState(false);
   const [shared, setShared] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +15,7 @@ export default function SendPassword() {
   });
   const [warning, setWarning] = useState("");
 
-  const handleShare = () => {
+  const handleShare = async () => {
     if (!form.secrets) {
       setIsOpen(true);
       setWarning("You need to add a secret");
@@ -30,6 +32,15 @@ export default function SendPassword() {
       return;
     }
     setLoading(true);
+    await supabase.from("secrets").insert([
+      {
+        from: account,
+        to: form.address,
+        secret: form.secrets,
+        price: form.price,
+        status: "pending",
+      },
+    ]);
     setTimeout(() => {
       setLoading(false);
       setShared(true);
@@ -139,3 +150,7 @@ export default function SendPassword() {
     </>
   );
 }
+
+SendPassword.propTypes = {
+  account: PropTypes.string,
+};

@@ -6,6 +6,7 @@ import List from "./components/ListSecrets";
 import { ethers } from "ethers";
 import Landing from "./components/Landing";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { supabase } from "../utils/supabase";
 
 function App() {
   const [account, setAccount] = useState();
@@ -52,8 +53,6 @@ function App() {
     letters.innerText = randomString(1500);
   };
 
-  const [see, setSee] = useState(true);
-
   return (
     <>
       <Router>
@@ -68,6 +67,8 @@ function App() {
 
 function Dashboard() {
   const [account, setAccount] = useState();
+  const [receivedSecrets, setReceivedSecrets] = useState([]);
+  const [sentSecrets, setSentSecrets] = useState([]);
   const { sdk, connected } = useSDK();
 
   const connect = async () => {
@@ -82,12 +83,16 @@ function Dashboard() {
   useEffect(() => {
     const initializeProvider = async () => {
       if (window.ethereum) {
-        console.log(account);
-        console.log(window.ethereum);
         const provider = new ethers.BrowserProvider(window.ethereum);
-        console.log(provider);
-        const network = await provider.getNetwork();
-        console.log(network.name);
+        const account = await provider.listAccounts();
+        setAccount(account[0].address);
+        if (account[0].address) {
+          const { data, error } = await supabase.from("secrets").select("*").eq("to", account[0].address);
+          console.log(data, error);
+          const from = await supabase.from("secrets").select("*").eq("from", account[0].address);
+          setSentSecrets(from.data);
+          setReceivedSecrets(data);
+        }
       }
     };
     initializeProvider();
@@ -123,11 +128,11 @@ function Dashboard() {
                 <button onClick={connect}>Connect</button>
               ) : see ? (
                 <div id="list-secrets" className="password list-secrets w-full overflow-scroll">
-                  <List openForm={() => setSee(false)} />
+                  <List receivedSecrets={receivedSecrets} sentSecrets={sentSecrets} openForm={() => setSee(false)} />
                 </div>
               ) : (
                 <div className="password w-full">
-                  <SendPassword />
+                  <SendPassword account={account} />
                 </div>
               )}
             </div>

@@ -1,10 +1,13 @@
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import PropTypes from "prop-types";
+import Approve from "./Approve";
+import { useState } from "react";
+import { supabase } from "../../utils/supabase";
 
 const statuses = {
-  offline: "text-gray-500 bg-gray-100/10",
-  online: "text-green-400 bg-green-400/10",
-  error: "text-rose-400 bg-rose-400/10",
+  cancel: "text-gray-500 bg-gray-100/10",
+  sold: "text-green-400 bg-green-400/10",
+  pending: "text-rose-400 bg-rose-400/10",
 };
 const environments = {
   Sold: "text-gray-400 bg-gray-400/10 ring-gray-400/20",
@@ -13,70 +16,32 @@ const environments = {
   Waiting: "text-gray-400 bg-gray-400/10 ring-gray-400/20",
   Canceled: "text-rose-400 bg-rose-400/10 ring-rose-400/20",
 };
-const deployments = [
-  {
-    id: 1,
-
-    teamName: "Fortnite",
-    status: "offline",
-    statusText: "password",
-    description: "username",
-    environment: "Owned",
-  },
-  {
-    id: 2,
-
-    teamName: "Pubg",
-    status: "online",
-    statusText: "password",
-    description: "username",
-    environment: "Shared",
-  },
-  {
-    id: 3,
-
-    teamName: "AWS",
-    status: "online",
-    statusText: "password",
-    description: "username",
-    environment: "Shared",
-  },
-  {
-    id: 4,
-
-    teamName: "Twitter",
-    status: "offline",
-    statusText: "password",
-    description: "username",
-    environment: "Owned",
-  },
-  {
-    id: 5,
-
-    teamName: "Gmail",
-    status: "offline",
-    statusText: "password",
-    description: "username",
-    environment: "Owned",
-  },
-  {
-    id: 6,
-
-    teamName: "Figma",
-    status: "online",
-    statusText: "password",
-    description: "username",
-    environment: "Shared",
-  },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function List({ openForm }) {
+export default function List({ openForm, receivedSecrets, sentSecrets }) {
+  const [selectedSecret, setSelectedSecret] = useState({ secret: "" });
+  const [open, setOpen] = useState(false);
+  const handleSelect = (secret) => {
+    setSelectedSecret(secret);
+    setOpen(true);
+  };
+
+  const handleApply = async () => {
+    await supabase.from("secrets").update({ status: "sold" }).eq("id", selectedSecret.id);
+    setOpen(false);
+  };
+
+  const handleDeny = async () => {
+    await supabase.from("secrets").update({ status: "cancel" }).eq("id", selectedSecret.id);
+    setOpen(false);
+  };
+
   return (
     <>
+      <Approve secret={selectedSecret.secret} status={selectedSecret.status} open={open} setOpen={setOpen} approve={handleApply} deny={handleDeny} />
       <li key={1} className="relative flex items-center  text-center  py-4">
         <div className="min-w-0 flex-auto">
           <div className="flex items-center gap-x-3">
@@ -91,30 +56,42 @@ export default function List({ openForm }) {
         </div>
       </li>
       <ul role="list" className="divide-y divide-white/5 overflow-scroll">
-        {deployments.map((deployment) => (
-          <li key={deployment.id} className="relative flex items-center space-x-4 py-4">
+        {receivedSecrets.map((deployment) => (
+          <li key={deployment.id} className="relative flex items-center space-x-4 py-4" onClick={() => handleSelect(deployment)}>
             <div className="min-w-0 flex-auto">
               <div className="flex items-center gap-x-3">
                 <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
                   <div className="h-2 w-2 rounded-full bg-current" />
                 </div>
                 <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
-                  <span className="truncate">{deployment.teamName}</span>
-                  <span className="text-gray-400">/</span>
+                  <span className="truncate">{deployment.secret}</span>
 
                   <span className="absolute inset-0" />
                 </h2>
               </div>
-              <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                <p className="truncate">{deployment.description}</p>
-                <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 flex-none fill-gray-300">
-                  <circle cx={1} cy={1} r={1} />
-                </svg>
-                <p className="whitespace-nowrap">{deployment.statusText}</p>
+            </div>
+            <div className={classNames(environments[deployment.environment], "rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset")}>
+              {deployment.status === "sold" ? "owned" : deployment.status}
+            </div>
+            <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+          </li>
+        ))}
+        {sentSecrets.map((deployment) => (
+          <li key={deployment.id} className="relative flex items-center space-x-4 py-4" onClick={() => handleSelect(deployment)}>
+            <div className="min-w-0 flex-auto">
+              <div className="flex items-center gap-x-3">
+                <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
+                  <div className="h-2 w-2 rounded-full bg-current" />
+                </div>
+                <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
+                  <span className="truncate">{deployment.secret}</span>
+
+                  <span className="absolute inset-0" />
+                </h2>
               </div>
             </div>
             <div className={classNames(environments[deployment.environment], "rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset")}>
-              {deployment.environment}
+              {deployment.status === "canceled" ? "returned" : deployment.status}
             </div>
             <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
           </li>
@@ -126,4 +103,6 @@ export default function List({ openForm }) {
 
 List.propTypes = {
   openForm: PropTypes.func,
+  receivedSecrets: PropTypes.array,
+  sentSecrets: PropTypes.array,
 };
