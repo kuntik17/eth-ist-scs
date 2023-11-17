@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import { useSDK } from "@metamask/sdk-react";
 import SendPassword from "./components/SendForm";
