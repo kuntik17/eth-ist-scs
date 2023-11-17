@@ -5,54 +5,10 @@ import SendPassword from "./components/SendForm";
 import List from "./components/ListSecrets";
 import { ethers } from "ethers";
 import Landing from "./components/Landing";
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { supabase } from "../utils/supabase";
 
 function App() {
-  const [account, setAccount] = useState();
-  const { sdk, connected } = useSDK();
-
-  const connect = async () => {
-    try {
-      const accounts = await sdk?.connect();
-      setAccount(accounts?.[0]);
-    } catch (err) {
-      console.warn(`failed to connect..`, err);
-    }
-  };
-
-  useEffect(() => {
-    const initializeProvider = async () => {
-      if (window.ethereum) {
-        console.log(account);
-        console.log(window.ethereum);
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        console.log(provider);
-        const network = await provider.getNetwork();
-        console.log(network.name);
-      }
-    };
-    initializeProvider();
-  }, []);
-
-  const handleOnMove = (e) => {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-0x";
-
-    const randomChar = () => chars[Math.floor(Math.random() * (chars.length - 1))],
-      randomString = (length) => Array.from(Array(length)).map(randomChar).join("");
-
-    const card = document.querySelector(".card"),
-      letters = card.querySelector(".card-letters");
-    const rect = card.getBoundingClientRect(),
-      x = e.clientX - rect.left,
-      y = e.clientY - rect.top;
-
-    letters.style.setProperty("--x", `${x}px`);
-    letters.style.setProperty("--y", `${y}px`);
-
-    letters.innerText = randomString(1500);
-  };
-
   return (
     <>
       <Router>
@@ -96,7 +52,7 @@ function Dashboard() {
       }
     };
     initializeProvider();
-  }, []);
+  }, [connected]);
 
   const handleOnMove = (e) => {
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-0x";
