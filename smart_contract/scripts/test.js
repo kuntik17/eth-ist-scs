@@ -132,6 +132,6 @@ getSecretText();
 
 //setPrice("0.001")
 
-//readPublicVariables();
+readPublicVariables();
 //setConfirmSecretStatus(true);
 //setConfirmSecretStatus(false);
