@@ -46,6 +46,11 @@ contract SecretTextContract {
         _;
     }
 
+    modifier onlySellerAndBuyer() {
+        require(msg.sender == sellerAddress || msg.sender == buyerAddress, "Only seller or buyer can call this");
+        _;
+    }
+
     // New function to set the seller address
     function setSellerAddress(address _sellerAddress) public onlyOwner {
         sellerAddress = _sellerAddress;

@@ -53,6 +53,11 @@ async function checkAllowedAddress(address) {
   console.log(tx)
 }
 
+async function setConfirmSecretStatus(bool) {
+  const tx = await contract.setConfirmSecretStatus(bool);
+  console.log(tx)
+}
+
 async function setPrice(priceInEther) {
   // Convert the price from Ether to Wei
   const priceInWei = ethers.utils.parseUnits(priceInEther, "ether");
@@ -96,15 +101,19 @@ async function payStakeToSeller() {
 async function readPublicVariables() {
   const sellerAddress = await contract.sellerAddress();
   const buyerAddress = await contract.buyerAddress();
+
   const price = await contract.price();
   const parsedPrice = ethers.BigNumber.from(price);
   const priceInEther = ethers.utils.formatEther(parsedPrice);
   const priceAsString = priceInEther.toString();
 
+  const confirmSecretStatus = await contract.confirmSecretStatus();
+
   console.log("seller", sellerAddress);
   console.log("buyer", buyerAddress);
   console.log("price", priceAsString);
   console.log("raw price: ", price)
+  console.log("confirm secret status: ", confirmSecretStatus)
 }
 
 // functions tests
@@ -114,7 +123,8 @@ async function readPublicVariables() {
 //getSecretText();
 //addStake("0.001")
 //returnStake()
-payStakeToSeller()
+//payStakeToSeller()
+
 
 //setSellerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
 //setBuyerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
@@ -123,3 +133,5 @@ payStakeToSeller()
 //setPrice("0.001")
 
 //readPublicVariables();
+//setConfirmSecretStatus(true);
+//setConfirmSecretStatus(false);
