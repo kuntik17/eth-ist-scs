@@ -1,17 +1,4 @@
-import { useState } from "react";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
-const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
-];
-
 export default function Landing() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <div className="bg-gray-900">
       <header className="absolute inset-x-0 top-0 z-50">
@@ -21,12 +8,7 @@ export default function Landing() {
               <img className="h-8 w-auto" src="/logo.svg" alt="" />
             </a>
           </div>
-          <div className="flex lg:hidden">
-            <button type="button" className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400" onClick={() => setMobileMenuOpen(true)}>
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </div>
+          <div className="flex lg:hidden"></div>
         </nav>
       </header>
 
@@ -60,7 +42,7 @@ export default function Landing() {
             <p className="mt-6 text-lg leading-8 text-gray-300">Share your secrets using blockchain technology. No one can see your secret until you share it with them.</p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
-                href="/dashboard"
+                href="/connect"
                 className="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
               >
                 Get started
