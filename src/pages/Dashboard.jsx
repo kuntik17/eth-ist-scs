@@ -10,6 +10,7 @@ function Dashboard() {
   const [accounts, setAccount] = useState();
   const [receivedSecrets, setReceivedSecrets] = useState([]);
   const [sentSecrets, setSentSecrets] = useState([]);
+  const [avaibleSecrets, setAvaibleSecrets] = useState([]);
 
   useEffect(() => {
     const initializeProvider = async () => {
@@ -31,11 +32,13 @@ function Dashboard() {
         // const tx = await contract.setSellerAddress(account[0].address);
         const tx = await contract.sellerAddress();
         console.log(tx, "tx");
+
         setAccount(account[0].address);
         if (account[0].address) {
-          const { data, error } = await supabase.from("secrets").select("*").eq("to", account[0].address);
-          console.log(data, error);
+          const { data } = await supabase.from("secrets").select("*").eq("to", account[0].address);
           const from = await supabase.from("secrets").select("*").eq("from", account[0].address);
+          const listed = await supabase.from("secrets").select("*").eq("status", "listed");
+          setAvaibleSecrets(listed.data);
           setSentSecrets(from.data);
           setReceivedSecrets(data);
         }
@@ -67,7 +70,7 @@ function Dashboard() {
       const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
       const priceInWei = ethers.parseUnits(secret.price, "ether");
       console.log(priceInWei, "priceInWei");
-      console.log(contract_seller);
+      tx_setSeller.wait(2);
       const tx_setPrice = await contract_seller.setPrice(priceInWei);
       const tx_setSecret = await contract_seller.setSecretText(secret.secret);
       console.log(tx_setPrice, tx_setSecret, "tx");
@@ -78,7 +81,7 @@ function Dashboard() {
     <>
       {see ? (
         <div id="list-secrets" className="password list-secrets w-full overflow-scroll">
-          <List receivedSecrets={receivedSecrets} sentSecrets={sentSecrets} openForm={() => setSee(false)} />
+          <List receivedSecrets={receivedSecrets} sentSecrets={sentSecrets} avaibleSecrets={avaibleSecrets} openForm={() => setSee(false)} />
         </div>
       ) : (
         <div className="password w-full">

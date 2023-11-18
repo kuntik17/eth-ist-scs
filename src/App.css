@@ -37,6 +37,7 @@ body {
   scroll-behavior: auto;
   overflow-y: scroll !important;
   height: 400px;
+  width: 600px !important;
 }
 
 .card-track {
