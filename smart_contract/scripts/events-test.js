@@ -41,6 +41,12 @@ async function listenForEvent() {
     console.log('amount:', amount);
   });
 
+  contract.on('StakeAdded', (address, amount) => {
+    console.log('Event: Stake added');
+    console.log('address:', address);
+    console.log('amount:', amount);
+  });
+
   console.log('Listening for events...');
 
   // Keep the script running indefinitely
