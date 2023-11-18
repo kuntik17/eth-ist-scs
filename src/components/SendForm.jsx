@@ -21,11 +21,6 @@ export default function SendPassword({ account, handleSwap }) {
       setWarning("You need to add a secret");
       return;
     }
-    // if (!form.address) {
-    //   setIsOpen(true);
-    //   setWarning("You need to add an address to swap");
-    //   return;
-    // }
     if (!form.price) {
       setIsOpen(true);
       setWarning("You need to add a price for swap");
@@ -36,9 +31,9 @@ export default function SendPassword({ account, handleSwap }) {
       {
         from: account,
         to: "0x0000000",
-        secret: form.secrets,
+        secret: "Steam Account",
         price: form.price,
-        status: "pending",
+        status: "listed",
       },
     ]);
     handleSwap({ seller: account, price: form.price, secret: form.secrets });

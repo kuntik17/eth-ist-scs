@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import PropTypes from "prop-types";
 
-export default function Approve({ setOpen, open, secret, approve, deny, status, price }) {
+export default function Approve({ setOpen, open, secret, approve, deny, status, price, isSecret }) {
   if (!secret && open) return <></>;
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -34,18 +34,18 @@ export default function Approve({ setOpen, open, secret, approve, deny, status, 
                 <div>
                   <div className="mt-3 text-center sm:mt-5">
                     <Dialog.Title as="h3" className="text-base mb-4 font-semibold leading-6 text-gray-900">
-                      {secret}
+                      {isSecret ? isSecret : secret}
                     </Dialog.Title>
                   </div>
                 </div>
-                {status === "pending" ? (
+                {status === "listed" ? (
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
                       onClick={approve}
                     >
-                      Pay {price} ETH
+                      {isSecret ? "Approve" : `Stake ${price} ETH`}
                     </button>
                     <button
                       type="button"
@@ -82,4 +82,5 @@ Approve.propTypes = {
   setOpen: PropTypes.func,
   status: PropTypes.string,
   price: PropTypes.string,
+  isSecret: PropTypes.string,
 };
