@@ -14,7 +14,7 @@ export default function Connect() {
   const connect = async () => {
     try {
       const account = await sdk?.connect();
-      console.log(account);
+
       if (account && account[0]) {
         window.location.href = "/dashboard";
       }

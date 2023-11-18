@@ -79,9 +79,6 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
             name="tabs"
             className="cursor-pointer block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
             defaultValue={tabs.find((tab) => tab.current).name}
-            onChange={(event) => {
-              console.log(event.target.value);
-            }}
           >
             {tabs.map((tab) => (
               <option key={tab.name}>{tab.name}</option>
