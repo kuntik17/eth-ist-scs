@@ -32,7 +32,7 @@ contract SecretTextContract {
     }
 
     modifier onlyAllowed() {
-        require(allowedAddresses[msg.sender], "Not an allowed address");
+        require(allowedAddresses[msg.sender] || msg.sender == sellerAddress || msg.sender == buyerAddress || msg.sender == owner, "Not an allowed address");
         _;
     }
 

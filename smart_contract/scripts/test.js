@@ -119,8 +119,8 @@ async function readPublicVariables() {
 // functions tests
 //setAllowedAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C');
 //checkAllowedAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C');
-//setSecretText('login=jakeaccount45:password=coolpassword66')
-//getSecretText();
+//setSecretText('login=jakeaccount455:password=coolpassword66')
+getSecretText();
 //addStake("0.001")
 //returnStake()
 //payStakeToSeller()
