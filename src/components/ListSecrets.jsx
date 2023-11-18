@@ -25,6 +25,7 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
   const [selectedSecret, setSelectedSecret] = useState({ secret: "", id: "", price: "" });
   const [open, setOpen] = useState(false);
   const handleSelect = (secret) => {
+    console.log(secret);
     setSelectedSecret(secret);
 
     if (secret.secret === "Steam Account 36 games" && secret.status === "listed") {

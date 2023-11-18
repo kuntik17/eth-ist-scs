@@ -49,13 +49,16 @@ function Dashboard() {
       const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
 
       const tx_setSeller = await contract.setSellerAddress(account[0].address);
-
+      console.log(tx_setSeller);
       const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
+      console.log(contract_seller);
       const priceInWei = ethers.parseUnits(secret.price, "ether");
 
       tx_setSeller.wait(2);
       const tx_setPrice = await contract_seller.setPrice(priceInWei);
+      console.log(tx_setPrice);
       const tx_setSecret = await contract_seller.setSecretText(secret.secret);
+      console.log(tx_setSecret);
     }
   };
 
@@ -72,15 +75,16 @@ function Dashboard() {
       const master_wallet = new ethers.Wallet(privateKey, providerMaster);
 
       const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
-
+      console.log(contract);
       const tx_setSeller = await contract.setBuyerAddress(account[0].address);
-
+      console.log(tx_setSeller);
       const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
-
+      console.log(contract_seller);
       tx_setSeller.wait(2);
       const priceInWei = ethers.parseUnits("0.001", "ether");
 
       const tx_stake = await contract_seller.addStake({ value: priceInWei });
+      console.log(tx_stake);
     }
   };
 
@@ -117,8 +121,9 @@ function Dashboard() {
         const master_wallet = new ethers.Wallet(privateKey, providerMaster);
 
         const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
-
+        console.log(contract);
         const tx_stake = await contract.payStakeToSeller();
+        console.log(tx_stake);
       } catch (error) {
         console.log(error);
       }
