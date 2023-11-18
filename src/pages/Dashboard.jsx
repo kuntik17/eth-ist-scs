@@ -43,12 +43,13 @@ function Dashboard() {
     const initializeProvider = async () => {
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        console.log(provider);
         const account = await provider.listAccounts();
-
-        setAccount(account[0].address);
-        if (account[0].address) {
-          const { data } = await supabase.from("secrets").select("*").eq("to", account[0].address);
-          const from = await supabase.from("secrets").select("*").eq("from", account[0].address);
+        console.log(account);
+        setAccount(account[0]);
+        if (account[0]) {
+          const { data } = await supabase.from("secrets").select("*").eq("to", account[0]);
+          const from = await supabase.from("secrets").select("*").eq("from", account[0]);
           const listed = await supabase.from("secrets").select("*").eq("status", "listed");
 
           setAvailableSecrets(listed.data);
@@ -74,10 +75,12 @@ function Dashboard() {
 
       const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
 
-      const tx_setSeller = await contract.setSellerAddress(account[0].address);
+      const tx_setSeller = await contract.setSellerAddress(account[0]);
 
       const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
-      const priceInWei = ethers.parseUnits(secret.price, "ether");
+      const priceInWei = ethers.utils.parseUnits(secret.price, "ether");
+
+      console.log(priceInWei);
 
       tx_setSeller.wait(2);
       const tx_setPrice = await contract_seller.setPrice(priceInWei);
@@ -91,19 +94,19 @@ function Dashboard() {
       const account = await provider.listAccounts();
       const infuraApiKey = "87a0c31e5f3f4baaae705bb627d0350c";
       const goerliEndpoint = `https://goerli.infura.io/v3/${infuraApiKey}`;
-      const providerMaster = new ethers.JsonRpcProvider(goerliEndpoint);
+      const providerMaster = new ethers.providers.JsonRpcProvider(goerliEndpoint);
 
       const privateKey = "5e7c050e4b572af2829de5e6625b7de13094f249870a4ddf7da9fcbb46bd1f61";
       const master_wallet = new ethers.Wallet(privateKey, providerMaster);
 
       const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
 
-      const tx_setSeller = await contract.setBuyerAddress(account[0].address);
+      const tx_setSeller = await contract.setBuyerAddress(account[0]);
 
-      const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
+      const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, provider.getSigner());
 
       tx_setSeller.wait(2);
-      const priceInWei = ethers.parseUnits("0.001", "ether");
+      const priceInWei = ethers.utils.parseUnits("0.001", "ether");
 
       const tx_stake = await contract_seller.addStake({ value: priceInWei });
     }

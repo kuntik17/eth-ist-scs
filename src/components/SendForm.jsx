@@ -31,7 +31,7 @@ export default function SendPassword({ account, handleSwap }) {
       {
         from: account,
         to: "0x0000000",
-        secret: "Steam Account",
+        secret: "Steam Account 36 games",
         price: form.price,
         status: "listed",
       },
