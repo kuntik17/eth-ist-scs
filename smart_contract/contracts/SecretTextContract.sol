@@ -3,8 +3,13 @@
 // to deploy: npx hardhat run scripts/deploy.js
 pragma solidity ^0.8.0;
 
-contract SecretTextContract {
-    address public owner;
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+import "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
+
+abstract contract SecretTextContract is ChainlinkClient, ConfirmedOwner {
+
+    using Chainlink for Chainlink.Request;
+    //address public owner;
     mapping(address => bool) public allowedAddresses;
     mapping(address => uint256) public stakes;
     uint256 public price;
@@ -12,6 +17,11 @@ contract SecretTextContract {
     bool public confirmSecretStatus;
     address public sellerAddress;
     address public buyerAddress;
+    uint256 public volume;
+    bytes32 private jobId;
+    uint256 private fee;
+
+    event RequestVolume(bytes32 indexed requestId, uint256 volume);
 
     event SecretTextChanged(string newSecretText, address setter);
     event StakeAdded(address indexed staker, uint256 amount);
@@ -22,17 +32,17 @@ contract SecretTextContract {
     event BuyerAddressSet(address indexed newBuyerAddress);
     event PriceSet(uint256 newPrice);
 
-    constructor() {
+    /*constructor() {
         owner = msg.sender;
-    }
+    }*/
 
-    modifier onlyOwner() {
+    /*modifier onlyOwner() override {
         require(msg.sender == owner, "Not the owner");
         _;
-    }
+    }*/
 
     modifier onlyAllowed() {
-        require(allowedAddresses[msg.sender] || msg.sender == sellerAddress || msg.sender == buyerAddress || msg.sender == owner, "Not an allowed address");
+        require(allowedAddresses[msg.sender] || msg.sender == sellerAddress || msg.sender == buyerAddress /*|| msg.sender == owner*/, "Not an allowed address");
         _;
     }
 
@@ -114,5 +124,50 @@ contract SecretTextContract {
         // Convert the price from Ether to Wei
         price = _price;
         emit PriceSet(price);
+    }
+
+    function requestVolumeData() public returns (bytes32 requestId) {
+        Chainlink.Request memory req = buildChainlinkRequest(
+            jobId,
+            address(this),
+            this.fulfill.selector
+        );
+
+        // Set the URL to perform the GET request on
+        req.add(
+            "get",
+            "http://54.166.55.127:8989/checkLogin/jakeaccount11/password3333"
+        );
+
+        req.add("path", "RAW,ETH,USD,VOLUME24HOUR"); // Chainlink nodes 1.0.0 and later support this format
+
+        // Multiply the result by 1000000000000000000 to remove decimals
+        int256 timesAmount = 10 ** 18;
+        req.addInt("times", timesAmount);
+
+        // Sends the request
+        return sendChainlinkRequest(req, fee);
+    }
+
+     /**
+     * Receive the response in the form of uint256
+     */
+    function fulfill(
+        bytes32 _requestId,
+        uint256 _volume
+    ) public recordChainlinkFulfillment(_requestId) {
+        emit RequestVolume(_requestId, _volume);
+        volume = _volume;
+    }
+
+    /**
+     * Allow withdraw of Link tokens from the contract
+     */
+    function withdrawLink() public onlyOwner {
+        LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
+        require(
+            link.transfer(msg.sender, link.balanceOf(address(this))),
+            "Unable to transfer"
+        );
     }
 }
