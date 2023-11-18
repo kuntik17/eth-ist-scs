@@ -116,17 +116,27 @@ async function readPublicVariables() {
   console.log("confirm secret status: ", confirmSecretStatus)
 }
 
+async function getContractBalance() {
+  const balance = await provider.getBalance(contractAddress);
+  console.log(balance);
+}
+
+async function getStake(address) {
+  const stake = await contract.stakes(address);
+  console.log(stake);
+}
+
 // functions tests
 //setAllowedAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C');
 //checkAllowedAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C');
 //setSecretText('login=jakeaccount455:password=coolpassword66')
-getSecretText();
+//getSecretText();
 //addStake("0.001")
 //returnStake()
 //payStakeToSeller()
 
 
-//setSellerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
+setSellerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
 //setBuyerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
 //setSellerAddress('0x3bAEa58C85a56db599Ad63ff2522DE051c24CE35')
 
@@ -135,3 +145,7 @@ getSecretText();
 //readPublicVariables();
 //setConfirmSecretStatus(true);
 //setConfirmSecretStatus(false);
+
+//getContractBalance();
+
+//getStake('0x08eEB885AfF95a31971ae323FB554ed397E5a63B')

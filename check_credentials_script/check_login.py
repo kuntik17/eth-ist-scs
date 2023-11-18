@@ -9,6 +9,7 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
+# example call: http://127.0.0.1:5000/checkLogin/jakeaccount/password
 @app.route('/checkLogin/<string:username>/<string:password>', methods=['GET'])
 
 def checkLogin(username, password):
