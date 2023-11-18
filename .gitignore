@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+smart_contract/.env
+smart_contract/node_modules
+smart_contract/cache
+node_test/node_modules
