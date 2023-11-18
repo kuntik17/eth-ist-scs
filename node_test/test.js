@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 
 // Replace these values with your contract address and ABI
-const contractAddress = '0x844615E1B2eCD40D01e6eaB7271cD177AEb3e6B4';
+const contractAddress = '0x1f234e3BD9FFbb05a07dD34632d202cd7e93EC3D';
 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"newSecretText","type":"string"},{"indexed":false,"internalType":"address","name":"setter","type":"address"}],"name":"SecretTextChanged","type":"event"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"addAllowedAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"allowedAddresses","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getSecretText","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"removeAllowedAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"_secretText","type":"string"}],"name":"setSecretText","outputs":[],"stateMutability":"nonpayable","type":"function"}]; // Your contract ABI goes here
 
 // Infura API key and Goerli endpoint

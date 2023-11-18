@@ -7,14 +7,20 @@ contract SecretTextContract {
     address public owner;
     mapping(address => bool) public allowedAddresses;
     mapping(address => uint256) public stakes;
-    string[] private secretTexts;
+    uint256 public price;
+    string private secretText;
     bool public confirmSecretStatus;
+    address public sellerAddress;
+    address public buyerAddress;
 
     event SecretTextChanged(string newSecretText, address setter);
     event StakeAdded(address indexed staker, uint256 amount);
     event StakeReturned(address indexed staker, uint256 amount);
-    event StakePaidToOwner(address indexed owner, uint256 amount);
+    event StakePaidToSeller(address indexed owner, uint256 amount);
     event ConfirmSecretStatusSet(bool newStatus);
+    event SellerAddressSet(address indexed newSellerAddress);
+    event BuyerAddressSet(address indexed newBuyerAddress);
+    event PriceSet(uint256 newPrice);
 
     constructor() {
         owner = msg.sender;
@@ -30,14 +36,26 @@ contract SecretTextContract {
         _;
     }
 
-    function setSecretText(string memory _secretText) public onlyAllowed {
-        secretTexts.push(_secretText);
-        emit SecretTextChanged(_secretText, msg.sender);
+    modifier onlySeller() {
+        require(msg.sender == sellerAddress, "Not the seller");
+        _;
     }
 
-    function getSecretText(uint256 index) public view onlyAllowed returns (string memory) {
-        require(index < secretTexts.length, "Index out of bounds");
-        return secretTexts[index];
+    modifier onlyBuyer() {
+        require(msg.sender == buyerAddress, "Not the buyer");
+        _;
+    }
+
+    // New function to set the seller address
+    function setSellerAddress(address _sellerAddress) public onlyOwner {
+        sellerAddress = _sellerAddress;
+        emit SellerAddressSet(_sellerAddress);
+    }
+
+    // New function to set the buyer address
+    function setBuyerAddress(address _buyerAddress) public onlyOwner {
+        buyerAddress = _buyerAddress;
+        emit BuyerAddressSet(_buyerAddress);
     }
 
     function addAllowedAddress(address _address) public onlyOwner {
@@ -48,35 +66,48 @@ contract SecretTextContract {
         allowedAddresses[_address] = false;
     }
 
-    function getSecretTextsCount() public view returns (uint256) {
-        return secretTexts.length;
+    function setSecretText(string memory _secretText) public onlySeller {
+        secretText = _secretText;
+        emit SecretTextChanged(_secretText, msg.sender);
     }
 
-    function addStake() public payable {
-        require(msg.value > 0, "Stake amount must be greater than 0");
+    function getSecretText() public view onlyAllowed returns (string memory) {
+        return secretText;
+    }
+
+    // Function to add a stake, ensuring it matches the set price
+    function addStake() public onlyBuyer payable {
+        // Require that the sent value is equal to the price
+        require(msg.value == price, "Stake amount must be equal to the price");
+
         stakes[msg.sender] += msg.value;
         emit StakeAdded(msg.sender, msg.value);
     }
 
-    function returnStake() public {
-        uint256 stakeAmount = stakes[msg.sender];
+    function returnStake() public onlyOwner{
+        uint256 stakeAmount = stakes[sellerAddress];
         require(stakeAmount > 0, "No stake to return");
         stakes[msg.sender] = 0;
         payable(msg.sender).transfer(stakeAmount);
         emit StakeReturned(msg.sender, stakeAmount);
     }
 
-    function payStakeToOwner() public {
-        uint256 stakeAmount = stakes[msg.sender];
+    function payStakeToSeller() public onlyOwner {
+        uint256 stakeAmount = stakes[buyerAddress];
         require(stakeAmount > 0, "No stake to pay");
-        stakes[msg.sender] = 0;
-        payable(owner).transfer(stakeAmount);
-        emit StakePaidToOwner(owner, stakeAmount);
+        stakes[buyerAddress] = 0;
+        payable(sellerAddress).transfer(stakeAmount);
+        emit StakePaidToSeller(sellerAddress, stakeAmount);
     }
 
-    function setConfirmSecretStatus(bool _status) public onlyOwner {
+    function setConfirmSecretStatus(bool _status) public onlyBuyer {
         confirmSecretStatus = _status;
         emit ConfirmSecretStatusSet(_status);
     }
 
+    function setPrice(uint256 _price) public onlySeller {
+        // Convert the price from Ether to Wei
+        price = _price;
+        emit PriceSet(price);
+    }
 }
