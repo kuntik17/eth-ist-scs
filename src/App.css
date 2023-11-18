@@ -37,11 +37,12 @@ body {
   scroll-behavior: auto;
   overflow-y: scroll !important;
   height: 400px;
+  width: 600px !important;
 }
 
 .card-track {
   height: 100%;
-  width: 100%;
+  width: 560px;
   display: flex;
   align-items: center;
   position: relative;
