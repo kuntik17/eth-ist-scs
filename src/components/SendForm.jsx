@@ -4,7 +4,7 @@ import Alert from "./Alert";
 import { supabase } from "../../utils/supabase";
 import PropTypes from "prop-types";
 
-export default function SendPassword({ account }) {
+export default function SendPassword({ account, handleSwap }) {
   const [loading, setLoading] = useState(false);
   const [shared, setShared] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -21,11 +21,11 @@ export default function SendPassword({ account }) {
       setWarning("You need to add a secret");
       return;
     }
-    if (!form.address) {
-      setIsOpen(true);
-      setWarning("You need to add an address to swap");
-      return;
-    }
+    // if (!form.address) {
+    //   setIsOpen(true);
+    //   setWarning("You need to add an address to swap");
+    //   return;
+    // }
     if (!form.price) {
       setIsOpen(true);
       setWarning("You need to add a price for swap");
@@ -35,12 +35,13 @@ export default function SendPassword({ account }) {
     await supabase.from("secrets").insert([
       {
         from: account,
-        to: form.address,
+        to: "0x0000000",
         secret: form.secrets,
         price: form.price,
         status: "pending",
       },
     ]);
+    handleSwap({ seller: account, price: form.price, secret: form.secrets });
     setTimeout(() => {
       setLoading(false);
       setShared(true);
@@ -80,6 +81,7 @@ export default function SendPassword({ account }) {
                   />
                 </div>
               </div>
+              {/*
               <div className={"relative mt-2 rounded-md shadow-sm"}>
                 <label htmlFor="wallet-address" className="block text-sm font-semibold leading-6 text-white mt-4">
                   Wallet address to share
@@ -96,12 +98,12 @@ export default function SendPassword({ account }) {
                     onChange={(e) => setform({ ...form, address: e.target.value })}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="relative mt-2 rounded-md shadow-sm">
                 <>
                   <label htmlFor="wallet-address" className="mt-4 block text-sm font-semibold leading-6 text-white">
-                    Price for swapping
+                    Swap Rate
                   </label>
                   <div className="flex items-center">
                     <div className=" relative mt-2 rounded-md shadow-sm">
@@ -153,4 +155,5 @@ export default function SendPassword({ account }) {
 
 SendPassword.propTypes = {
   account: PropTypes.string,
+  handleSwap: PropTypes.func,
 };
