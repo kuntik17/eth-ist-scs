@@ -124,7 +124,7 @@ async function readPublicVariables() {
 //addStake("0.001")
 //returnStake()
 //payStakeToSeller()
-//setConfirmSecretStatus(true);
+
 
 //setSellerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
 //setBuyerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
@@ -132,4 +132,6 @@ async function readPublicVariables() {
 
 //setPrice("0.001")
 
-readPublicVariables();
+//readPublicVariables();
+setConfirmSecretStatus(true);
+//setConfirmSecretStatus(false);
