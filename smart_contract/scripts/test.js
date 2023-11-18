@@ -133,5 +133,5 @@ async function readPublicVariables() {
 //setPrice("0.001")
 
 //readPublicVariables();
-setConfirmSecretStatus(true);
+//setConfirmSecretStatus(true);
 //setConfirmSecretStatus(false);
