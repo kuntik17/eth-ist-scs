@@ -174,7 +174,7 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
                 </div>
               </div>
               <div className={classNames(environments[deployment.environment], "rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset")}>
-                {deployment.price} ETH
+                {deployment.price} MNT
               </div>
               <ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
             </li>

@@ -103,7 +103,7 @@ export default function SendPassword({ account, handleSwap }) {
                   <div className="flex items-center">
                     <div className=" relative mt-2 rounded-md shadow-sm">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span className="text-gray-500 sm:text-sm">ETH</span>
+                        <span className="text-gray-500 sm:text-sm">MNT</span>
                       </div>
 
                       <input

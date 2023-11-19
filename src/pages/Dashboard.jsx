@@ -38,10 +38,10 @@ function Dashboard() {
     if (window.ethereum) {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const account = await provider.listAccounts();
-      const infuraApiKey = "87a0c31e5f3f4baaae705bb627d0350c";
-      const goerliEndpoint = `https://goerli.infura.io/v3/${infuraApiKey}`;
+      //const infuraApiKey = "87a0c31e5f3f4baaae705bb627d0350c";
+      //const goerliEndpoint = `https://goerli.infura.io/v3/${infuraApiKey}`;
 
-      const providerMaster = new ethers.JsonRpcProvider(goerliEndpoint);
+      const providerMaster = new ethers.JsonRpcProvider("https://rpc.testnet.mantle.xyz/");
 
       const privateKey = "5e7c050e4b572af2829de5e6625b7de13094f249870a4ddf7da9fcbb46bd1f61";
       const master_wallet = new ethers.Wallet(privateKey, providerMaster);

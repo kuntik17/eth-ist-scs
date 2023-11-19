@@ -5,11 +5,12 @@ const { API_URL, PRIVATE_KEY } = process.env;
 
 module.exports = {
   solidity: "0.8.0",
-  defaultNetwork: "goerli",
+  defaultNetwork: "mantle",
    networks: {
       hardhat: {},
-      goerli: {
-         url: API_URL,
+      mantle: {
+         url: "https://rpc.testnet.mantle.xyz/",
+         chainId: 5001,
          accounts: [`0x${PRIVATE_KEY}`]
       }
    },
