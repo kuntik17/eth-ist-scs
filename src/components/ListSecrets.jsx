@@ -167,9 +167,9 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
                   <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
                     <div className="h-2 w-2 rounded-full bg-current" />
                   </div>
-                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
+                  <h2 className="flex min-w-0 text-sm font-semibold leading-6 text-white">
                     <span className="truncate">{deployment.secret}</span>
-                    <span className="absolute inset-0" />
+                    {deployment.id % 3 === 0 && <img className="w-10 h-10 ml-2" src="/ape.png" />}
                   </h2>
                 </div>
               </div>
