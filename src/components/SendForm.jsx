@@ -141,7 +141,7 @@ export default function SendPassword({ account, handleSwap }) {
             </div>
           </div>
         ) : (
-          <h1 className="obfuscated w-full min-h-full h-96 mx-auto my-auto mt-72 text-center"> Waiting approval</h1>
+          <h1 className="obfuscated w-full min-h-full h-96 mx-auto my-auto mt-24 text-center"> Listed</h1>
         )}
       </div>
     </>
