@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Network, Alchemy } from 'alchemy-sdk';
 import List from "../components/ListSecrets";
 import { ethers } from "ethers";
 import { supabase } from "../../utils/supabase";
@@ -11,6 +12,7 @@ function Dashboard() {
   const [receivedSecrets, setReceivedSecrets] = useState([]);
   const [sentSecrets, setSentSecrets] = useState([]);
   const [AvailableSecrets, setAvailableSecrets] = useState([]);
+  const [ApeCoinStatus, setApeCoinStatus] = useState([]);
 
   useEffect(() => {
     const initializeProvider = async () => {
@@ -37,6 +39,11 @@ function Dashboard() {
 
   const handleSwap = async (secret) => {
     if (window.ethereum) {
+
+      if (checkIfApecoinTokenHolder() == true){
+        setApeCoinStatus(true)
+      }
+
       const provider = new ethers.BrowserProvider(window.ethereum);
       const account = await provider.listAccounts();
       const infuraApiKey = "87a0c31e5f3f4baaae705bb627d0350c";
@@ -92,6 +99,33 @@ function Dashboard() {
 
       supabase.from("secrets").update({ messageKit: messageKit }).eq("id", selectedSecret.id);
   };
+
+   // check if ape coin holder
+   const checkIfApecoinTokenHolder = async (
+    address,
+    mainOrTest = 'mainnet'
+  ) => {
+    if (mainOrTest === 'mainnet') {
+
+      const alchemyMainnet = new Alchemy({
+        apiKey: process.env.REACT_APP_ALCHEMY_KEY_MAINNET,
+        network: Network.ETH_MAINNET,
+      });
+
+      const apecoinContractMainnet = '0x4d224452801ACEd8B2F0aebE155379bb5D594381';
+
+      return alchemyMainnet.core
+        .getTokenBalances(address, [apecoinContractMainnet])
+        .then(balances => {
+          const { tokenBalances } = balances;
+          const holdsTokens =
+            tokenBalances[0].tokenBalance !==
+            '0x0000000000000000000000000000000000000000000000000000000000000000';
+          return holdsTokens; //boolean
+        });
+    }
+  };
+
 
   const handleStake = async () => {
     if (window.ethereum) {
