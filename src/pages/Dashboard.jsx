@@ -5,7 +5,6 @@ import { supabase } from "../../utils/supabase";
 import { SecretTextContract } from "../../smart_contract/deployedAddresses.json";
 import contractData from "../../smart_contract/artifacts/contracts/SecretTextContract.sol/SecretTextContract.json";
 import { useSDK } from "@metamask/sdk-react";
-import { initialize, encrypt, conditions, domains } from "@nucypher/taco";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -56,51 +55,38 @@ function Dashboard() {
 
   const handleSwap = async (secret) => {
     if (window.ethereum) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const account = await provider.listAccounts();
-
-      const providerMaster = new ethers.JsonRpcProvider("https://rpc.testnet.mantle.xyz/");
-
-      const privateKey = "5e7c050e4b572af2829de5e6625b7de13094f249870a4ddf7da9fcbb46bd1f61";
-      const master_wallet = new ethers.Wallet(privateKey, providerMaster);
-
-      const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
-
-      const tx_setSeller = await contract.setSellerAddress(account[0].address);
-
-      const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
-      const priceInWei = ethers.parseUnits(secret.price, "ether");
-
-      tx_setSeller.wait(2);
-      const tx_setPrice = await contract_seller.setPrice(priceInWei);
-      const tx_setSecret = await contract_seller.setSecretText(secret.secret);
-
-      // encrypt with threshold
-      const contractAddr = "0x08B30a7fB75a873DfF03aDBCcf866B27d8d7DD85";
-
-      // We have to initialize the TACo library first
-      await initialize();
-
-      //@ts-ignore
-      const isBuyerAddressCondition = new conditions.base.ContractCondition({
-        method: "getBuyerAddress", // `myMethodAbi.name`
-        parameters: [":userAddress"], // `myMethodAbi.inputs`
-        functionAbi: contractData.abi, // Our custom function ABI
-        contractAddress: contractAddr,
-        chain: 5,
-        returnValueTest: {
-          index: 0,
-          comparator: ">",
-          value: 0,
-        },
-      });
-
-      const message = "my secret message";
-
-      const messageKit = await encrypt(provider, domains.DEV, message, isBuyerAddressCondition, 0, provider.getSigner());
+      // const provider = new ethers.BrowserProvider(window.ethereum);
+      // const account = await provider.listAccounts();
+      // const providerMaster = new ethers.JsonRpcProvider("https://rpc.testnet.mantle.xyz/");
+      // const privateKey = "5e7c050e4b572af2829de5e6625b7de13094f249870a4ddf7da9fcbb46bd1f61";
+      // const master_wallet = new ethers.Wallet(privateKey, providerMaster);
+      // const contract = new ethers.Contract(SecretTextContract, contractData.abi, master_wallet);
+      // const tx_setSeller = await contract.setSellerAddress(account[0].address);
+      // const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
+      // const priceInWei = ethers.parseUnits(secret.price, "ether");
+      // tx_setSeller.wait(2);
+      // const tx_setPrice = await contract_seller.setPrice(priceInWei);
+      // const tx_setSecret = await contract_seller.setSecretText(secret.secret);
+      // // encrypt with threshold
+      // const contractAddr = "0x08B30a7fB75a873DfF03aDBCcf866B27d8d7DD85";
+      // // We have to initialize the TACo library first
+      // await initialize();
+      // //@ts-ignore
+      // const isBuyerAddressCondition = new conditions.base.ContractCondition({
+      //   method: "getBuyerAddress", // `myMethodAbi.name`
+      //   parameters: [":userAddress"], // `myMethodAbi.inputs`
+      //   functionAbi: contractData.abi, // Our custom function ABI
+      //   contractAddress: contractAddr,
+      //   chain: 5,
+      //   returnValueTest: {
+      //     index: 0,
+      //     comparator: ">",
+      //     value: 0,
+      //   },
+      // });
+      // const message = "my secret message";
+      // const messageKit = await encrypt(provider, domains.DEV, message, isBuyerAddressCondition, 0, provider.getSigner());
     }
-
-    supabase.from("secrets").update({ messageKit: messageKit }).eq("id", selectedSecret.id);
   };
 
   const handleStake = async () => {
@@ -145,14 +131,8 @@ function Dashboard() {
         setSecret(tx_stake);*/
 
         // retrieve secret via threshold messagekit
-        supabase.from("secrets").update({ messageKit: messageKit }).eq("id", selectedSecret.id);
+
         const { data } = await supabase.from("secrets").select("*").eq("to", account[0].address);
-
-        await initialize();
-
-        const decryptedMessage = await decrypt(provider, domains.DEV, data.messageKit, getPorterUri(domains.DEV), provider.getSigner());
-
-        setSecret(decryptedMessage);
       } catch (error) {
         console.log(error);
       }

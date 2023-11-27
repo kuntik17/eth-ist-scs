@@ -32,17 +32,24 @@ export default function SendPassword({ account, handleSwap }) {
       setWarning("You need to add a price for swap");
       return;
     }
+    if (enabled && !form.address) {
+      setIsOpen(true);
+      setWarning("You need to add a wallet address");
+      return;
+    }
     setLoading(true);
     await supabase.from("secrets").insert([
       {
         from: account,
-        to: "0x0000000",
+        to: form.address ? form.address : "0x0000000",
         secret: "Steam Account 36 games",
         price: form.price,
-        status: "listed",
+        status: form.address ? "Shared" : "Listed",
       },
     ]);
-    handleSwap({ seller: account, price: form.price, secret: form.secrets });
+
+    handleSwap({ seller: account, price: form.price, secret: form.secrets, address: form.address });
+
     setTimeout(() => {
       setLoading(false);
       setShared(true);
