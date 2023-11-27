@@ -21,7 +21,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, accounts, handleSwap, handleStake, secret, handlePay }) {
+export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, accounts, handleSwap, handleStake, secret, handlePay, tab }) {
   const [selectedSecret, setSelectedSecret] = useState({ secret: "", id: "", price: "" });
   const [open, setOpen] = useState(false);
   const handleSelect = (secret) => {
@@ -31,7 +31,6 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
       setOpen(true);
     }
   };
-  const [tab, setTab] = useState("Received");
 
   const handleApply = async () => {
     if (secret) {
@@ -49,13 +48,6 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
     setOpen(false);
   };
 
-  const tabs = [
-    { name: "Available", count: AvailableSecrets.length, current: tab === "Available" },
-    { name: "Received", count: receivedSecrets.length, current: tab === "Received" },
-    { name: "Sent", count: sentSecrets.length, current: tab === "Sent" },
-    { name: "Create Listing", count: "", current: tab === "Create Listing" },
-  ];
-
   return (
     <>
       <Approve
@@ -68,68 +60,21 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
         approve={handleApply}
         deny={handleDeny}
       />
-      <div>
-        <div className="sm:hidden mb-2">
-          <label htmlFor="tabs" className="sr-only">
-            Select a tab
-          </label>
-          {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-          <select
-            id="tabs"
-            name="tabs"
-            className="cursor-pointer block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-            defaultValue={tabs.find((tab) => tab.current).name}
-          >
-            {tabs.map((tab) => (
-              <option key={tab.name}>{tab.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="hidden sm:block">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8 mb-2" aria-label="Tabs">
-              {tabs.map((tab) => (
-                <div
-                  key={tab.name}
-                  onClick={() => setTab(tab.name)}
-                  className={classNames(
-                    tab.current ? "border-indigo-500 text-indigo-600 cursor-pointer" : " cursor-pointer border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
-                    "flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                  )}
-                  aria-current={tab.current ? "page" : undefined}
-                >
-                  {tab.name}
-                  {tab.count ? (
-                    <span
-                      className={classNames(
-                        tab.current ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-900",
-                        "ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
-                      )}
-                    >
-                      {tab.count}
-                    </span>
-                  ) : null}
-                </div>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </div>
 
-      <ul role="list" className="divide-y divide-white/5 overflow-scroll">
+      <ul role="list" className="divide-y divide-gray-100 text-black w-1/2 ml-auto mr-auto mt-20">
         {tab === "Received" ? (
           receivedSecrets.map((deployment) => (
-            <li key={deployment.id} className="relative flex items-center space-x-4 py-4">
+            <li key={deployment.id} className="flex items-center justify-between gap-x-6 py-5">
               <div className="min-w-0 flex-auto">
                 <div className="flex items-center gap-x-3">
                   <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
                     <div className="h-2 w-2 rounded-full bg-current" />
                   </div>
-                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
-                    <span className="truncate">{deployment.secret}</span>
+                  <div className="min-w-0 text-sm font-semibold leading-6 text-black">
+                    <span className="truncate text-black">{deployment.secret}</span>
 
                     <span className="absolute inset-0" />
-                  </h2>
+                  </div>
                 </div>
               </div>
               <div className={classNames(environments[deployment.environment], "rounded-full flex-none py-1 px-2 text-xs font-medium ring-1 ring-inset")}>
@@ -140,13 +85,13 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
           ))
         ) : tab === "Sent" ? (
           sentSecrets.map((deployment) => (
-            <li key={deployment.id} className="relative flex items-center space-x-4 py-4">
+            <li key={deployment.id} className="flex items-center justify-between gap-x-6 py-5">
               <div className="min-w-0 flex-auto">
                 <div className="flex items-center gap-x-3">
                   <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
                     <div className="h-2 w-2 rounded-full bg-current" />
                   </div>
-                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-white">
+                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-black">
                     <span className="truncate">{deployment.secret}</span>
 
                     <span className="absolute inset-0" />
@@ -161,15 +106,14 @@ export default function List({ receivedSecrets, sentSecrets, AvailableSecrets, a
           ))
         ) : tab === "Available" ? (
           AvailableSecrets.map((deployment) => (
-            <li key={deployment.id} className="relative flex items-center space-x-4 py-4" onClick={() => handleSelect(deployment)}>
+            <li key={deployment.id} className="flex items-center justify-between gap-x-6 py-5" onClick={() => handleSelect(deployment)}>
               <div className="min-w-0 flex-auto">
                 <div className="flex items-center gap-x-3">
                   <div className={classNames(statuses[deployment.status], "flex-none rounded-full p-1")}>
                     <div className="h-2 w-2 rounded-full bg-current" />
                   </div>
-                  <h2 className="flex min-w-0 text-sm font-semibold leading-6 text-white">
+                  <h2 className="flex min-w-0 text-sm font-semibold leading-6 text-black">
                     <span className="truncate">{deployment.secret}</span>
-                    {deployment.id % 3 === 0 && <img className="w-10 h-10 ml-2" src="/ape.png" />}
                   </h2>
                 </div>
               </div>
@@ -196,4 +140,5 @@ List.propTypes = {
   handleStake: PropTypes.func,
   secret: PropTypes.string,
   handlePay: PropTypes.func,
+  tab: PropTypes.string,
 };
