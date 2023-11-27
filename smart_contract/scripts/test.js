@@ -9,10 +9,10 @@ const contractAddress = deployedAddresses.SecretTextContract;
 const contractABI = contractData.abi;
 
 // Infura API key and Goerli endpoint
-const infuraApiKey = '87a0c31e5f3f4baaae705bb627d0350c';
-const goerliEndpoint = `https://goerli.infura.io/v3/${infuraApiKey}`;
+//const infuraApiKey = '87a0c31e5f3f4baaae705bb627d0350c';
+//const goerliEndpoint = `https://goerli.infura.io/v3/${infuraApiKey}`;
 //const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/pUstIeCE3BsAvGDCSEvaCvtE-8lNpbyM`);
-const provider = new ethers.providers.JsonRpcProvider(goerliEndpoint);
+const provider = new ethers.providers.JsonRpcProvider("https://rpc.testnet.mantle.xyz/");
 
 // Replace with your private key
 const privateKey = '5e7c050e4b572af2829de5e6625b7de13094f249870a4ddf7da9fcbb46bd1f61';
@@ -134,7 +134,6 @@ async function getStake(address) {
 //addStake("0.001")
 //returnStake()
 //payStakeToSeller()
-
 
 setSellerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
 //setBuyerAddress('0x66636CeA8a193f5E806C2dd5CA19055D9A69EA7C')
