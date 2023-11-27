@@ -5,7 +5,7 @@ import { supabase } from "../../utils/supabase";
 import { SecretTextContract } from "../../smart_contract/deployedAddresses.json";
 import contractData from "../../smart_contract/artifacts/contracts/SecretTextContract.sol/SecretTextContract.json";
 import { useSDK } from "@metamask/sdk-react";
-
+import { initialize, encrypt, conditions, domains } from "@nucypher/taco";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -58,8 +58,6 @@ function Dashboard() {
     if (window.ethereum) {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const account = await provider.listAccounts();
-      //const infuraApiKey = "87a0c31e5f3f4baaae705bb627d0350c";
-      //const goerliEndpoint = `https://goerli.infura.io/v3/${infuraApiKey}`;
 
       const providerMaster = new ethers.JsonRpcProvider("https://rpc.testnet.mantle.xyz/");
 
@@ -76,7 +74,33 @@ function Dashboard() {
       tx_setSeller.wait(2);
       const tx_setPrice = await contract_seller.setPrice(priceInWei);
       const tx_setSecret = await contract_seller.setSecretText(secret.secret);
+
+      // encrypt with threshold
+      const contractAddr = "0x08B30a7fB75a873DfF03aDBCcf866B27d8d7DD85";
+
+      // We have to initialize the TACo library first
+      await initialize();
+
+      //@ts-ignore
+      const isBuyerAddressCondition = new conditions.base.ContractCondition({
+        method: "getBuyerAddress", // `myMethodAbi.name`
+        parameters: [":userAddress"], // `myMethodAbi.inputs`
+        functionAbi: contractData.abi, // Our custom function ABI
+        contractAddress: contractAddr,
+        chain: 5,
+        returnValueTest: {
+          index: 0,
+          comparator: ">",
+          value: 0,
+        },
+      });
+
+      const message = "my secret message";
+
+      const messageKit = await encrypt(provider, domains.DEV, message, isBuyerAddressCondition, 0, provider.getSigner());
     }
+
+    supabase.from("secrets").update({ messageKit: messageKit }).eq("id", selectedSecret.id);
   };
 
   const handleStake = async () => {
@@ -115,10 +139,20 @@ function Dashboard() {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
 
-        const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
+        /*const contract_seller = new ethers.Contract(SecretTextContract, contractData.abi, await provider.getSigner());
 
         const tx_stake = await contract_seller.getSecretText();
-        setSecret(tx_stake);
+        setSecret(tx_stake);*/
+
+        // retrieve secret via threshold messagekit
+        supabase.from("secrets").update({ messageKit: messageKit }).eq("id", selectedSecret.id);
+        const { data } = await supabase.from("secrets").select("*").eq("to", account[0].address);
+
+        await initialize();
+
+        const decryptedMessage = await decrypt(provider, domains.DEV, data.messageKit, getPorterUri(domains.DEV), provider.getSigner());
+
+        setSecret(decryptedMessage);
       } catch (error) {
         console.log(error);
       }
